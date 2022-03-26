@@ -3,10 +3,12 @@ package gee
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type router struct {
 	router map[string]HandlerFunc
+	roots  map[string]*node
 }
 
 func newRouter() *router {
@@ -25,5 +27,28 @@ func (router *router) handler(c *Context) {
 
 func (router *router) addRoute(method string, pattern string, handlerFunc HandlerFunc) {
 	key := method + "_" + pattern
+	_, ok := router.roots[method]
+	if !ok {
+		router.roots[method] = &node{}
+	}
+	router.roots[method].insert(pattern, parsePattern(pattern), 0)
 	router.router[key] = handlerFunc
+}
+
+func parsePattern(pattern string) []string {
+	if len(pattern) == 0 {
+		return nil
+	}
+	sp := strings.Split(pattern, "/")
+	parts := make([]string, 0)
+	for _, value := range sp {
+		if value == "" {
+			continue
+		}
+		parts = append(parts, value)
+		if value[0] == '*' {
+			break
+		}
+	}
+	return parts
 }

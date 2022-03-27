@@ -11,6 +11,7 @@ type Context struct {
 	Path       string
 	Method     string
 	StatusCode int
+	Prams      map[string]string
 }
 
 func (c *Context) Json(status int, obj ...interface{}) {

@@ -23,7 +23,7 @@ func main() {
 			context.Json(http.StatusNotFound, "not found")
 		})
 	}
-	err := engine.Run(":8080")
+	err := engine.Run("127.0.0.1:8080")
 	if err != nil {
 		log.Fatalf("run has error : %v", err)
 	}

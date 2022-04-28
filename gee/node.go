@@ -54,17 +54,21 @@ func (n *node) search(parts []string, height int) *node {
 
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
-	var tempNode *node
+	var hasAppend = false
+	var tempNode []*node
 	for _, child := range n.children {
 		if child.part == part {
 			nodes = append(nodes, child)
+			hasAppend = true
 		}
 		if child.isWild {
-			tempNode = child
+			tempNode = append(tempNode, child)
 		}
 	}
-	if tempNode != nil {
-		nodes = append(nodes, tempNode)
+	if !hasAppend && len(tempNode) > 0 {
+		for _, child := range tempNode {
+			nodes = append(nodes, child)
+		}
 	}
 	return nodes
 }

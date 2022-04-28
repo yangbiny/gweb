@@ -8,13 +8,13 @@ type node struct {
 	pattern  string  // 当前的完整路径
 	part     string  // 当前的部分路径
 	children []*node // 子路径信息
-	isWild   bool    // 是否严格匹配
+	isWild   bool    // 是否模糊匹配
 }
 
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
-		if child.part == part || child.isWild {
-			return n
+		if child.part == part {
+			return child
 		}
 	}
 	return nil
@@ -54,10 +54,17 @@ func (n *node) search(parts []string, height int) *node {
 
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
+	var tempNode *node
 	for _, child := range n.children {
-		if child.part == part || child.isWild {
+		if child.part == part {
 			nodes = append(nodes, child)
 		}
+		if child.isWild {
+			tempNode = child
+		}
+	}
+	if tempNode != nil {
+		nodes = append(nodes, tempNode)
 	}
 	return nodes
 }
